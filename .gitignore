@@ -18,6 +18,9 @@ mobius_score
 .idea/
 *.swp
 
+# Prism
+.prism
+
 # Build/deps
 build/
 dist/
