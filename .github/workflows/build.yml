@@ -12,9 +12,15 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libssl-dev pkg-config
-      
+   
       - name: Build
         run: make clean && make all
+
+      - name: Audit verification
+        env:
+          MOBIUS_AUDIT_SIGN_KEY: ${{ secrets.AUDIT_SIGN_KEY }}
+        run: |
+          ./test/audit_verify.sh
       
       - name: Unit tests
         run: ./test/unit.sh
