@@ -20,12 +20,12 @@ check-deps:
 
 build: $(TRAINER) $(SCORER)
 
-$(TRAINER): mobius_pl.c feature_schema_artifact.c
-	$(CC) $(CFLAGS) $(VERSION_FLAGS) mobius_pl.c feature_schema_artifact.c $(LDFLAGS) -o $@
+$(TRAINER): src/mobius_pl.c src/feature_schema_artifact.c
+	$(CC) $(CFLAGS) $(VERSION_FLAGS) src/mobius_pl.c src/feature_schema_artifact.c $(LDFLAGS) -o $@
 	@echo "Built: $@"
 
-$(SCORER): mobius_score.c feature_schema_artifact.c
-	$(CC) $(CFLAGS) $(VERSION_FLAGS) mobius_score.c feature_schema_artifact.c $(LDFLAGS) -o $@
+$(SCORER): src/mobius_score.c src/feature_schema_artifact.c
+	$(CC) $(CFLAGS) $(VERSION_FLAGS) src/mobius_score.c src/feature_schema_artifact.c $(LDFLAGS) -o $@
 	@echo "Built: $@"
 
 version:
