@@ -2,7 +2,7 @@
 .PHONY: all build clean test check-deps version help install
 
 CC := gcc
-CFLAGS := -O2 -Wall -Wextra -std=c11 -DPOSIX_C_SOURCE=200809L
+CFLAGS := -O2 -Wall -Wextra -std=c11 -DPOSIX_C_SOURCE=200809L -I./include
 LDFLAGS := -lcrypto -lm
 
 # Build flags with version info

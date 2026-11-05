@@ -1,5 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
-#include "../include/feature_schema_artifact.h"
+#include "feature_schema_artifact.h"
 
 #include <ctype.h>
 #include <stdio.h>

@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "../include/feature_schema_artifact.h"
+#include "feature_schema_artifact.h"
 
 #ifndef MOBIUS_VERSION
 #define MOBIUS_VERSION "0.0.1"
