@@ -5,6 +5,8 @@ on: [push, pull_request]
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      MOBIUS_AUDIT_SIGN_KEY: ${{ secrets.AUDIT_SIGN_KEY || 'ci-test-key-12345' }}
     steps:
       - uses: actions/checkout@v3
       
@@ -23,6 +25,4 @@ jobs:
         run: ./test/integration.sh
       
       - name: Audit verification
-        env:
-          MOBIUS_AUDIT_SIGN_KEY: ${{ secrets.AUDIT_SIGN_KEY || 'ci-test-key-12345' }}
         run: ./test/audit_verify.sh
