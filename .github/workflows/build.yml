@@ -3,16 +3,33 @@ name: Build & Test
 on: [push, pull_request]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: cd /mnt/Basefiles/CLearn/bkclib && docker build -f MobiusPL/Dockerfile . -t mobius-scorer:${{ github.sha }}
       
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: make clean && make all
-      - run: ./test/unit.sh
-      - run: ./test/integration.sh
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev pkg-config
+      
+      - name: Build
+        run: |
+          cd MobiusPL
+          make clean && make all
+      
+      - name: Unit tests
+        run: |
+          cd MobiusPL
+          ./test/unit.sh
+      
+      - name: Integration tests
+        run: |
+          cd MobiusPL
+          ./test/integration.sh
+      
+      - name: Audit verification
+        run: |
+          cd MobiusPL
+          export MOBIUS_AUDIT_SIGN_KEY="ci-test-key-12345"
+          ./test/audit_verify.sh

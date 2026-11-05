@@ -2,13 +2,13 @@ name: Build, Test & Release
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
     tags: ['v*']
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
-  build-and-test:
+  build-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,60 +16,48 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libssl-dev
+          sudo apt-get install -y libssl-dev pkg-config
       
       - name: Build
-        run: make clean all
+        run: |
+          cd MobiusPL
+          make clean && make all
       
       - name: Unit tests
-        run: make test-unit
+        run: |
+          cd MobiusPL
+          ./test/unit.sh
       
       - name: Integration tests
         run: |
-          export MOBIUS_AUDIT_SIGN_KEY="ci-test-key-123456789"
-          make test-integration
+          cd MobiusPL
+          ./test/integration.sh
       
       - name: Audit verification
         run: |
-          export MOBIUS_AUDIT_SIGN_KEY="ci-test-key-123456789"
-          make test-audit
+          cd MobiusPL
+          export MOBIUS_AUDIT_SIGN_KEY="ci-test-key-12345"
+          ./test/audit_verify.sh
 
   docker-build:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-    needs: build-and-test
+    needs: build-test
+    if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       
       - name: Extract version
-        id: vars
-        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        id: version
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
       
       - name: Build Docker image
-        run: docker build -t mobius-scorer:${{ steps.vars.outputs.version }} .
-      
-      - name: Push to registry
         run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker tag mobius-scorer:${{ steps.vars.outputs.version }} \
-            ${{ secrets.DOCKER_REGISTRY }}/mobius-scorer:latest
-          docker push ${{ secrets.DOCKER_REGISTRY }}/mobius-scorer:${{ steps.vars.outputs.version }}
-
-  create-release:
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: build-and-test
-    steps:
-      - uses: actions/checkout@v3
+          cd MobiusPL
+          docker build -t mobius-scorer:${{ steps.version.outputs.tag }} .
+          docker build -t mobius-scorer:latest .
       
-      - name: Build release artifacts
-        run: make tarball
-      
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: dist/mobius-*.tar.gz
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test Docker image
+        run: docker run --rm mobius-scorer:latest --help
