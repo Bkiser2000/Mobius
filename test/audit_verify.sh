@@ -31,8 +31,10 @@ fi
 
 # Test 2: Self-check passes
 echo "[TEST 2] Built-in self-check"
-if ! $SCORER --self-check decision_audit.jsonl >/dev/null 2>&1; then
+if ! output=$($SCORER --self-check decision_audit.jsonl 2>&1); then
     echo "FAIL: Self-check failed"
+    echo "--- Scorer output ---"
+    echo "$output"
     exit 1
 fi
 echo "PASS: Self-check passed"
