@@ -1,0 +1,18 @@
+name: Build & Test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: cd /mnt/Basefiles/CLearn/bkclib && docker build -f MobiusPL/Dockerfile . -t mobius-scorer:${{ github.sha }}
+      
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: make clean && make all
+      - run: ./test/unit.sh
+      - run: ./test/integration.sh
