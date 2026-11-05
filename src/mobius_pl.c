@@ -13,12 +13,12 @@
 #include <string.h>
 #include <float.h>
 #include <time.h>
-#include "../../include/queue.h"
-#include "../../include/hash_map.h"
-#include "../../include/matrix.h"
-#include "../../include/tensor.h"
-#include "../../include/vector.h"
-#include "../../include/sort.h"
+#include "../include/queue.h"
+#include "../include/hash_map.h"
+#include "../include/matrix.h"
+#include "../include/tensor.h"
+#include "../include/vector.h"
+#include "../include/sort.h"
 #include "../include/feature_schema_artifact.h"
 
 #ifndef MOBIUS_VERSION
