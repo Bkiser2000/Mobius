@@ -67,12 +67,14 @@ echo "PASS: Training generates artifacts"
 
 # Test 4: Scorer loads model
 echo "[TEST 4] Model artifact integrity"
-if ! output=$(echo "35,55000" | $SCORER model_v1.bin req_test subj_test 2>&1 | head -1); then
-    echo "FAIL: Scorer failed to load model"
+output=$(echo "35,55000" | $SCORER model_v1.bin req_test subj_test 2>&1 | head -1)
+if [[ -z "$output" ]]; then
+    echo "FAIL: No output from scorer"
     exit 1
 fi
 if [[ ! "$output" =~ "proba=" ]]; then
     echo "FAIL: Scorer output format invalid"
+    echo "Debug output: '$output'"
     exit 1
 fi
 echo "PASS: Model loads and scores"
