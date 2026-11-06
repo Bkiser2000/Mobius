@@ -2,7 +2,7 @@
 # Audit chain verification tests
 set -e
 
-SCORER="${1:-./ mobius_score}"
+SCORER="${1:-./mobius_score}"
 TESTDIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "=== MobiusPL Audit Verification Tests ==="
